@@ -9,7 +9,12 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:markdown",
+    "onLanguage:mdx",
+    "onLanguage:javascript",
+    "onLanguage:typescript"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
