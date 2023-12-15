@@ -17,12 +17,26 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "todo-highlight.goto-first-highlight",
-        "title": "Go to first highlight"
+    "configuration": {
+      "title": "Todo Highlight",
+      "properties": {
+        "todo-highlight.target-keyword": {
+          "type": "string",
+          "default": "todo:",
+          "description": "Keywords to highlight."
+        },
+        "todo-highlight.background-color": {
+          "type": "string",
+          "default": "#ff0060",
+          "description": "Background color of highlighted area."
+        },
+        "todo-highlight.foreground-color": {
+          "type": "string",
+          "default": "#ffffff",
+          "description": "Text color of highlighted area."
+        }
       }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

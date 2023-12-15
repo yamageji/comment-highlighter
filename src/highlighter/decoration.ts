@@ -37,4 +37,8 @@ export class HighlightDecoration {
     // すべての箇所にハイライトを適用
     editor.setDecorations(this._style, ranges);
   }
+
+  setNewStyle(options: vscode.DecorationRenderOptions) {
+    this._style = this._createStyle(options);
+  }
 }

@@ -59,6 +59,15 @@ export function activate(context: vscode.ExtensionContext) {
       }
     })
   );
+
+  // ユーザー設定が変更されたら
+  vscode.workspace.onDidChangeConfiguration((event) => {
+    // 変更されたのがtodo-highlight拡張機能に関する設定であれば
+    if (event.affectsConfiguration(EXTENSION_ID)) {
+      // 拡張機能の動作に新たな設定を反映
+      highlighter.updateConfig();
+    }
+  });
 }
 
 // This method is called when your extension is deactivated

@@ -4,6 +4,9 @@ import { HighlightCountView } from "./count-view";
 import { GotoLineCommand } from "../commands/goto-line";
 
 export class Highlighter {
+  // 拡張機能のID
+  private _id: string;
+
   // ハイライト対象を表す正規表現
   private _target: RegExp;
 
@@ -14,16 +17,16 @@ export class Highlighter {
 
   // 初期化時に行う処理をここにまとめる
   constructor(id: string) {
-    // 「todo:」で始まる行をハイライト対象とする
-    const keyword = "todo:";
-    // 正規表現オブジェクトも初期化時に生成し、使い回すことにする
-    this._target = new RegExp(`(${keyword}.*)$`, "gmi");
+    // 拡張機能のIDを保存
+    this._id = id;
 
-    // ハイライト表示機能を初期化する
-    this._decoration = new HighlightDecoration({
-      backgroundColor: "#ff0060",
-      color: "#ffffff",
-    });
+    // ユーザー設定に基づいた正規表現オブジェクトと、スタイル定義オブジェクトを取得
+    const { target, decorationStyle } = this._getConfig();
+    // 正規表現オブジェクトをハイライト対象として設定
+    this._target = target;
+    // スタイル定義オブジェクトをもとに、ハイライト機能を初期化
+    this._decoration = new HighlightDecoration(decorationStyle);
+
     // 独自コマンドのインスタンス化
     this._command = new GotoLineCommand(
       `${id}.goto-first-highlight`,
@@ -40,10 +43,24 @@ export class Highlighter {
     );
   }
 
-  // 独自コマンドをVS Codeに登録するメソッド
-  registerCommand(): vscode.Disposable {
-    const { command, execute } = this._command;
-    return vscode.commands.registerCommand(command, execute);
+  private _getConfig() {
+    const config = vscode.workspace.getConfiguration(this._id);
+    // todo-highlight.target-keywordの値を取得
+    const keyword = config.get<string>("target-keyword");
+    // todo-highlight.background-colorの値を取得
+    const background = config.get<string>("background-color");
+    // todo-highlight.foreground-colorの値を取得
+    const foreground = config.get<string>("foreground-color");
+    // ハイライト対象となる正規表現オブジェクトを生成
+    const target = new RegExp(`(${keyword}.*)$`, "gmi");
+
+    // ハイライト箇所のスタイルをオブジェクトとしてまとめる
+    const decorationStyle = {
+      backgroundColor: background,
+      color: foreground,
+    };
+
+    return { target, decorationStyle };
   }
 
   // ハイライト対象を取得するメソッド
@@ -56,6 +73,12 @@ export class Highlighter {
     return [...matches];
   }
 
+  // 独自コマンドをVS Codeに登録するメソッド
+  registerCommand(): vscode.Disposable {
+    const { command, execute } = this._command;
+    return vscode.commands.registerCommand(command, execute);
+  }
+
   // ハイライト、カウントなどの表示をまとめて更新するメソッド
   updateView(editor: vscode.TextEditor) {
     // ハイライト対象を取得
@@ -64,5 +87,14 @@ export class Highlighter {
     this._decoration.update(editor, matches);
     // ステータスバーのハイライトカウントを更新
     this._countView.update(matches);
+  }
+
+  updateConfig() {
+    const { target, decorationStyle } = this._getConfig();
+
+    // 新たなハイライト対象となる正規表現オブジェクトを設定
+    this._target = target;
+    // 新たなハイライト箇所のスタイルを設定
+    this._decoration.setNewStyle(decorationStyle);
   }
 }
