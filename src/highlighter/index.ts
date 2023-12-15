@@ -1,27 +1,49 @@
 import * as vscode from "vscode";
 import { HighlightDecoration } from "./decoration";
 import { HighlightCountView } from "./count-view";
+import { GotoLineCommand } from "../commands/goto-line";
 
 export class Highlighter {
   // ハイライト対象を表す正規表現
   private _target: RegExp;
 
+  // 各クラスのインスタンスを保持
   private _decoration: HighlightDecoration;
   private _countView: HighlightCountView;
+  private _command: GotoLineCommand;
 
   // 初期化時に行う処理をここにまとめる
-  constructor() {
+  constructor(id: string) {
     // 「todo:」で始まる行をハイライト対象とする
     const keyword = "todo:";
     // 正規表現オブジェクトも初期化時に生成し、使い回すことにする
     this._target = new RegExp(`(${keyword}.*)$`, "gmi");
+
     // ハイライト表示機能を初期化する
     this._decoration = new HighlightDecoration({
       backgroundColor: "#ff0060",
       color: "#ffffff",
     });
+    // 独自コマンドのインスタンス化
+    this._command = new GotoLineCommand(
+      `${id}.goto-first-highlight`,
+      "Go to first highlight"
+    );
+    // 検索結果から、コマンドに渡す引数（1件目のハイライト箇所の文字位置）を取得する関数
+    const get1stHighlightCharIdx = (matches: RegExpMatchArray[]) => [
+      matches[0].index,
+    ];
     // ハイライトカウント表示機能を初期化する
-    this._countView = new HighlightCountView();
+    this._countView = new HighlightCountView(
+      this._command,
+      get1stHighlightCharIdx
+    );
+  }
+
+  // 独自コマンドをVS Codeに登録するメソッド
+  registerCommand(): vscode.Disposable {
+    const { command, execute } = this._command;
+    return vscode.commands.registerCommand(command, execute);
   }
 
   // ハイライト対象を取得するメソッド

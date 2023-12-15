@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import { Highlighter } from "./highlighter";
 
+// package.jsonのnameフィールドに指定した拡張機能ID
+const EXTENSION_ID = "todo-highlight";
+
 // 機能を実行する対象ファイル
 const TARGET_LANGUAGE = ["markdown", "javascript", "typescript", "mdx"];
 // 対象ファイルかどうかを判定する関数
@@ -9,7 +12,7 @@ const isTargetFile = (editor: vscode.TextEditor) =>
 
 export function activate(context: vscode.ExtensionContext) {
   // todo-highlight拡張機能の全機能を初期化する
-  const highlighter = new Highlighter();
+  const highlighter = new Highlighter(EXTENSION_ID);
 
   // 現在エディタで編集中のファイルを取得
   const activeEditor = vscode.window.activeTextEditor;
@@ -20,6 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   context.subscriptions.push(
+    // 独自コマンドをVS Codeに登録
+    highlighter.registerCommand(),
+
     // 別なファイルを編集し始めたら or 編集中のファイルを閉じたら
     vscode.window.onDidChangeActiveTextEditor((activeEditor) => {
       // 編集中のファイルを閉じた場合は何もしない
@@ -33,6 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
       // ハイライトなどの表示を更新
       highlighter.updateView(activeEditor);
     }),
+
     // ファイルのテキストが変更されたら
     vscode.workspace.onDidChangeTextDocument((event) => {
       // 現在エディタで編集中のファイルを取得

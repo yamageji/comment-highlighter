@@ -19,8 +19,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "todo-highlight.helloWorld",
-        "title": "Hello World"
+        "command": "todo-highlight.goto-first-highlight",
+        "title": "Go to first highlight"
       }
     ]
   },
