@@ -45,11 +45,11 @@ export class Highlighter {
 
   private _getConfig() {
     const config = vscode.workspace.getConfiguration(this._id);
-    // todo-highlight.target-keywordの値を取得
+    // comment-highlighter.target-keywordの値を取得
     const keyword = config.get<string>("target-keyword");
-    // todo-highlight.background-colorの値を取得
+    // comment-highlighter.background-colorの値を取得
     const background = config.get<string>("background-color");
-    // todo-highlight.foreground-colorの値を取得
+    // comment-highlighter.foreground-colorの値を取得
     const foreground = config.get<string>("foreground-color");
     // ハイライト対象となる正規表現オブジェクトを生成
     const target = new RegExp(`(${keyword}.*)$`, "gmi");

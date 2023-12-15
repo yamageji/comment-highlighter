@@ -1,6 +1,6 @@
 {
-  "name": "todo-highlight",
-  "displayName": "todo-highlight",
+  "name": "comment-highlighter",
+  "displayName": "comment-highlighter",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -20,17 +20,17 @@
     "configuration": {
       "title": "Todo Highlight",
       "properties": {
-        "todo-highlight.target-keyword": {
+        "comment-highlighter.target-keyword": {
           "type": "string",
           "default": "todo:",
           "description": "Keywords to highlight."
         },
-        "todo-highlight.background-color": {
+        "comment-highlighter.background-color": {
           "type": "string",
           "default": "#ff0060",
           "description": "Background color of highlighted area."
         },
-        "todo-highlight.foreground-color": {
+        "comment-highlighter.foreground-color": {
           "type": "string",
           "default": "#ffffff",
           "description": "Text color of highlighted area."

@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { Highlighter } from "./highlighter";
 
 // package.jsonのnameフィールドに指定した拡張機能ID
-const EXTENSION_ID = "todo-highlight";
+const EXTENSION_ID = "comment-highlighter";
 
 // 機能を実行する対象ファイル
 const TARGET_LANGUAGE = ["markdown", "javascript", "typescript", "mdx"];
@@ -11,7 +11,7 @@ const isTargetFile = (editor: vscode.TextEditor) =>
   TARGET_LANGUAGE.includes(editor.document.languageId);
 
 export function activate(context: vscode.ExtensionContext) {
-  // todo-highlight拡張機能の全機能を初期化する
+  // comment-highlighter拡張機能の全機能を初期化する
   const highlighter = new Highlighter(EXTENSION_ID);
 
   // 現在エディタで編集中のファイルを取得
@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // ユーザー設定が変更されたら
   vscode.workspace.onDidChangeConfiguration((event) => {
-    // 変更されたのがtodo-highlight拡張機能に関する設定であれば
+    // 変更されたのがcomment-highlighter拡張機能に関する設定であれば
     if (event.affectsConfiguration(EXTENSION_ID)) {
       // 拡張機能の動作に新たな設定を反映
       highlighter.updateConfig();
