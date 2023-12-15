@@ -1,17 +1,22 @@
 import * as vscode from "vscode";
+import { Highlighter } from "./highlighter";
+
 // 機能を実行する対象ファイル
 const TARGET_LANGUAGE = ["markdown", "javascript", "typescript", "mdx"];
 // 対象ファイルかどうかを判定する関数
-const isTargetLanguage = (editor: vscode.TextEditor) =>
+const isTargetFile = (editor: vscode.TextEditor) =>
   TARGET_LANGUAGE.includes(editor.document.languageId);
 
 export function activate(context: vscode.ExtensionContext) {
+  // todo-highlight拡張機能の全機能を初期化する
+  const highlighter = new Highlighter();
+
   // 現在エディタで編集中のファイルを取得
   const activeEditor = vscode.window.activeTextEditor;
 
   // 拡張機能が有効化された時点でファイルを開いていれば
-  if (activeEditor) {
-    // todo: ハイライトを更新
+  if (activeEditor && isTargetFile(activeEditor)) {
+    highlighter.updateView(activeEditor);
   }
 
   context.subscriptions.push(
@@ -21,7 +26,12 @@ export function activate(context: vscode.ExtensionContext) {
       if (!activeEditor) {
         return;
       }
-      // todo: ハイライトを更新
+      // 実行対象ファイルでなければ何もしない
+      if (!isTargetFile(activeEditor)) {
+        return;
+      }
+      // ハイライトなどの表示を更新
+      highlighter.updateView(activeEditor);
     }),
     // ファイルのテキストが変更されたら
     vscode.workspace.onDidChangeTextDocument((event) => {
@@ -31,9 +41,14 @@ export function activate(context: vscode.ExtensionContext) {
       if (!activeEditor) {
         return;
       }
-      // 更新イベントが発生したファイルが現在編集中のふぁいるであれば
+      // 実行対象ファイルでなければ何もしない
+      if (!isTargetFile(activeEditor)) {
+        return;
+      }
+      // 変更イベントが発生したファイルが現在編集中のファイルであれば
       if (event.document.uri === activeEditor.document.uri) {
-        // todo: ハイライトを更新
+        // ハイライトなどの表示を更新
+        highlighter.updateView(activeEditor);
       }
     })
   );
